@@ -4,6 +4,8 @@ import io.vavr.test.Property;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.util.Base64;
 
@@ -33,6 +35,39 @@ class EncryptionTest {
                 )
                 .check()
                 .assertIsSatisfied();
+    }
+
+    @Test
+    void decryptEmail() throws Exception {
+        String encryptedText = Files.readString(Path.of("src/test/resources/EncryptedEmail.txt"), StandardCharsets.UTF_8);
+        String expectedPlainText = """
+                Dear consultant,
+                
+                We are facing an unprecedented challenge in Christmas Town.
+                
+                The systems that keep our magical operations running smoothly are outdated, fragile, and in dire need of modernization.\s
+                We urgently require your expertise to ensure Christmas happens this year.
+                Our town is located within a mountain circlet at the North Pole, surrounded by high peaks and protected by an advanced communication and shield system to hide it from the outside world.
+                
+                You have been selected for your exceptional skills and dedication.\s
+                Please report to the North Pole immediately.\s
+                
+                Enclosed are your travel details and a non-disclosure agreement that you must sign upon arrival.
+                Our dwarf friends from the security will receive and escort you in as soon as you check security.
+                In the following days, you will receive bracelets to be able to pass through the magic shield.
+                
+                Time is of the essence.
+                You must arrive before the beginning of December to be able to acclimate yourself with all the systems.
+                
+                We are counting on you to help save Christmas.
+                
+                Sincerely,
+                
+                Santa Claus 🎅""";
+
+        assertThat(encryption.decrypt(encryptedText))
+                .isEqualTo(expectedPlainText);
+
     }
 
     private static Encryption createEncryption() {
